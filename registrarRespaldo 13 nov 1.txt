@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+input[type=text], select {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #c6ecd9;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type=submit] {
+  width: 100%;
+  background-color: #008000;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  background-color: greenyellow;
+}
+
+div {
+  border-radius: 5px;
+  background-color: #53c68c;
+  padding: 20px;
+}
+</style>
+</head>
+<body>
+
+<title>AUDIO YOUR SLOGANHERE</title>
+<div style="background-color: #c6ecd9; text-align: center;">
+
+  <img src="logo21.png" alt="AUDIO" height="350" width="500">
+
+  <h3 style="color: black; font-family: Georgia, 'Times New Roman', serif;">Registrate</h3>
+  
+</div>
+
+<div>
+  <form action="/registrardo" > 
+  
+
+    <label for="fname">Nombre</label>
+    <input type="text" id="fname" name="firstname" placeholder="Tu nombre..">
+
+    <label for="lname">Apellido</label>
+    <input type="text" id="lname" name="lastname" placeholder="Tu apellido..">
+
+    <label for="age">Edad</label>
+    <input type="text" id="age" name="age" placeholder="Tu edad.." pattern="\d*" title="Ingresa solo números">
+
+
+
+    <label for="country">País</label>
+    <select id="country" name="country">
+      <option value="australia">Australia</option>
+      <option value="canada">Canadá</option>
+      <option value="usa">USA</option>
+      <option value="ciudadjuarez">Ciudad Juárez</option> 
+      <option value="mexico">México</option>              
+      <option value="colombia">Colombia</option>         
+      <option value="otro">Otro</option>                  
+    </select>
+    <br>
+    <br>
+  
+    <label for="pwd">Password</label>
+    <br>
+    <input type="password" id="pwd" name="password" pattern="^(?=.*\d).{8}$" title="La contraseña debe tener exactamente 8 caracteres y al menos un número" required>
+    <br>
+    <br>
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email">
+
+    <br>
+    <label for="phone">Telefono</label>
+    <input type="text" id="phone" name="phone" placeholder="Tu Telefono.." pattern="\d*" title="Ingresa solo números">
+
+    <br>
+    <br>
+    <br>
+    <input type="submit" value="Enviar">
+   
+  </form>
+</div>
+
+</body>
+</html>

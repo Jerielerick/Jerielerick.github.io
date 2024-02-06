@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Página de Quinielas</title>
+    <style>
+        /* Estilos para la página */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        nav {
+            background-color: #444;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        nav a {
+            color: #fff;
+            margin: 0 15px;
+            text-decoration: none;
+        }
+
+        section {
+            padding: 20px;
+            text-align: center;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        img {
+            width: 20px; /* Ajusta el tamaño del icono según sea necesario */
+            vertical-align: middle;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Mi Página de Quinielas</h1>
+    </header>
+
+    <nav>
+        <a href="/index.html">Inicio</a>
+        <a href="/insertarequipo.html">insertarequipo</a>
+        <a href="/insertarpartidos.html">insertar Partidos</a>
+    </nav>
+
+ <section>
+        <h2>Formulario de Pronóstico</h2>
+        <form action="/quinielas" method="get">
+            <table>
+                <tr>
+                    <td><label for="name_partido1">Chivas vs. Pumas</label></td>
+                    <td><input type="radio" id="partido1_local" name="pronostico[1]" value="local" required> Chivas
+                        <input type="radio" id="partido1_visitante" name="pronostico[1]" value="visitante" required> Pumas
+                        <input type="radio" id="partido1_empate" name="pronostico[1]" value="empate" required> Empate
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="name_partido2">León vs. Mazatlán</label></td>
+                    <td><input type="radio" id="partido2_local" name="equipo_local2" value="local" required> León
+                        <input type="radio" id="partido2_visitante" name="equipo_visitantes2" value="visitante" required> Mazatlán
+                        <input type="radio" id="partido2_empate" name="pronostico2" value="empate" required> Empate
+                    </td>   
+                </tr>
+                <tr>
+                    <td><label for="name_partido3">Pumas vs. Toluca</label></td>
+                    <td><input type="radio" id="partido3_local" name="equipo_local3" value="local" required> Pumas
+                        <input type="radio" id="partido3_visitante" name="equipo_visitantes3" value="visitante" required> Toluca
+                        <input type="radio" id="partido3_empate" name="pronostico3" value="empate" required> Empate
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="name_partido4">Juárez vs. Chivas</label></td>
+                    <td><input type="radio" id="partido4_local" name="equipo_local4" value="local" required> Juárez
+                        <input type="radio" id="partido4_visitante" name="equipo_visitantes4" value="visitante" required> Chivas
+                        <input type="radio" id="partido4_empate" name="pronostico4" value="empate" required> Empate
+                    </td>   
+                </tr>
+                <tr>
+                    <td><label for="name_partido5">Cruz Azul vs. Santos</label></td>
+                    <td><input type="radio" id="partido5_local" name="equipo_local5" value="local" required> Cruz Azul
+                        <input type="radio" id="partido5_visitante" name="equipo_visitantes5" value="visitante" required> Santos
+                        <input type="radio" id="partido5_empate" name="pronostico5" value="empate" required> Empate
+                    </td>
+                </tr>
+            </table>
+            <input type="hidden" id="equipo_ganador" name="equipo_ganador" value="">
+
+            <!-- Botón de envío -->
+            <button type="submit" onclick="setEquipoGanador()">Enviar Pronóstico</button>
+        </form>
+    </section>
+
+    <footer>
+            <!-- Script para establecer el equipo ganador -->
+            <script>
+                function setEquipoGanador() {
+                    // Obtener los valores de los radio buttons seleccionados
+                    var pronosticos = document.querySelectorAll('input[name^="pronostico"]:checked');
+    
+                    // Verificar que se haya seleccionado un pronóstico para cada partido
+                    if (pronosticos.length === 5) {
+                        // Crear un array con los valores seleccionados
+                        var valoresPronosticos = Array.from(pronosticos).map(function (radio) {
+                            return radio.value;
+                        });
+    
+                        // Asignar los valores al campo oculto
+                        document.getElementById('equipo_ganador').value = valoresPronosticos.join(',');
+                    } else {
+                        alert('Debes seleccionar un pronóstico para cada partido.');
+                    }
+                }
+            </script>
+
+</body>
+
+</html>
+

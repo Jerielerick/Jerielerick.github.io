@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documento</title>
+    <style>
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin: 20px;
+        }
+
+        th, td {
+            border: 1px solid #4287f5; /* Cambia el color del borde de las celdas */
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #8affa1; /* Cambia el color de fondo de las celdas de encabezado */
+        }
+
+        /* Cambia el color del texto en las celdas */
+        th, td {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>matricula</th>
+                <th>Nombre</th>
+                <th>Apellido</th>
+                <th>Edad</th>
+                <th>País</th>
+            </tr>
+        </thead>
+        <tbody>
+            <% ialumnos.forEach(function(fila){ %>
+                <tr>
+                    <td><%= fila.idStudent %></td>
+                    <td><%= fila.firstname %></td>
+                    <td><%= fila.lastname %></td>
+                    <td><%= fila.age %></td>
+                    <td><%= fila.country %></td>
+                </tr>
+            <% }); %>
+        </tbody>
+    </table>
+</body>
+</html>

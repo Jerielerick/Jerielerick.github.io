@@ -1,0 +1,203 @@
+const express = require('express');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+
+class Server {
+    constructor() {
+        this.app = express();
+        this.port = process.env.PORT;
+
+        this.middlewares();
+        this.routes();
+    }
+
+    middlewares() {
+        this.app.use(express.static('public'));
+        this.app.set('view engine', 'ejs');
+
+        this.app.use(cookieParser());
+
+        this.app.use(session({
+            secret: "amar",
+            saveUninitialized: true,
+            resave: true
+        }));
+    }
+
+    routes() {
+        this.app.get('/hola', (req, res) => {
+            if (res.session.user) {
+                res.send("iniciasre secion " + req.session.user.nam);
+            } else {
+                res.send("NO has inisado secion");
+            }
+        });
+
+        this.app.get('/login', (req, res) => {
+            let nombre = req.query.nombre;
+            let password = req.query.password;
+
+            // conexión bd
+            let mysql = require('mysql');
+
+            let con = mysql.createConnection({
+                host: "localhost",
+                user: "root",
+                password: "",
+                database: "appweb"
+            });
+
+            con.connect((err) => {
+                if (err) {
+                    console.error("Error al conectar a la base de datos: ", err);
+                    res.status(500).send("Error interno del servidor");
+                    return;
+                }
+
+                console.log("¡Conectado a la base de datos!");
+
+                let sql = "SELECT * FROM usuarios WHERE nombre_usuario = ? AND password = ?";
+                
+                // SQL y usar parámetros para evitar SQL injection
+
+                con.query(sql, [nombre, password], (err, result) => {
+                    if (err) {
+                        console.error("Error en la consulta: ", err);
+                        res.status(500).send("Error interno del servidor");
+                        return;
+                    }
+
+                    // Manejo de los resultados de la consulta
+                    if (result.length > 0 && password === result[0].password) {
+                        console.log("Inicio de sesión exitoso");
+                        res.render('quinielas');
+                    } else {
+                        // Usuario no encontrado o credenciales incorrectas
+                        res.status(401).send("Credenciales incorrectas");
+                    }
+
+                    // Cierra la conexión después de realizar la consulta
+                    con.end();
+                });
+            });
+
+        });
+
+        this.app.get('/registrardo', (req, res) => {
+            let idStudent = req.query.idStudent;
+            let firstname = req.query.firstname;
+            let lname = req.query.lname;
+            let lastname = req.query.lastname;
+            let age = req.query.age;
+            let country = req.query.country;
+            let password = req.query.password;
+            let email = req.query.email;
+            let phone = req.query.phone;
+
+            let mysql = require('mysql');
+
+            let con = mysql.createConnection({
+                host: "localhost",
+                user: "root",
+                password: "",
+                database: "appweb"
+            });
+
+            con.connect((err) => {
+                if (err) throw err;
+                console.log("Connected!");
+
+                let sql = "INSERT INTO ialumnos (`firstname`, `lastname`, `edad`, `country`, `password`, `email`, `phone`) VALUES ('" + firstname + "','" + lastname + "', " + age + " , '" + country + "','" + password + "','" + email + "','" + phone + "')";
+
+                con.query(sql, (err, result) => {
+                    if (err) throw err;
+
+                    console.log("1 record inserted");
+
+                    // Obtener el idStudent del resultado de la inserción
+                    let insertedId = result.insertId;
+
+                    res.render('registrado', {
+                        idStudent: insertedId,
+                        Nombre: firstname,
+                        country: country
+                    });
+                });
+            });
+        });
+
+
+        this.app.get('/actualizado', (req, res) => {
+            let idStudent = req.query.idStudent;
+            let firstname = req.query.firstname;
+            let lastname = req.query.lastname;
+            let country = req.query.country;
+            let password = req.query.password;
+            let email = req.query.email;
+            let phone = req.query.phone;
+
+            let mysql = require('mysql');
+
+            let con = mysql.createConnection({
+                host: "localhost",
+                user: "root",
+                password: "",
+                database: "appweb"
+            });
+
+            con.connect((err) => {
+                if (err) throw err;
+                console.log("Connected!");
+
+                let sql = "UPDATE ialumnos SET password  = '" + password + "' WHERE idStudent =" + idStudent + " AND firstname = '" + firstname + "' ";
+                //UPDATE `ialumnos` SET `password` =     'lenel nuevo' WHERE `ialumnos`.`idStudent` = 21;
+                con.query(sql, (err, result) => {
+                    if (err) throw err;
+
+                    console.log("1 record inserted");
+
+                    // Obtener el idStudent del resultado de la inserción
+                    let insertedId = result.insertId;
+
+                    res.render('actualizado', {
+                        idStudent: idStudent,
+                        Nombre: firstname,
+                        country: country
+                    });
+                });
+            });
+        });
+
+
+        this.app.get('/consultar', (req, res) => {
+            let mysql = require('mysql');
+
+            let con = mysql.createConnection({
+                host: "localhost",
+                user: "root",
+                password: "",
+                database: "appweb"
+            });
+
+            con.connect((err) => {
+                if (err) throw err;
+                console.log("¡Conectado a la base de datos!");
+                let sql = "SELECT * FROM ialumnos ";
+
+                con.query(sql, (err, result) => {
+                    if (err) throw err;
+                    console.log(result);
+                    res.render("consultar", { ialumnos: result });
+                });
+            });
+        });
+    }
+
+    listen() {
+        this.app.listen(this.port, () => {
+            console.log("http://127.0.0.1:" + this.port);
+        });
+    }
+}
+
+module.exports = Server;

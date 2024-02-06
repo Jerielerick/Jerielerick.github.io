@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Página de Quinielas</title>
+    <style>
+        /* Estilos para la página */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        nav {
+            background-color: #444;
+            padding: 10px 0;
+            text-align: center;
+        }
+
+        nav a {
+            color: #fff;
+            margin: 0 15px;
+            text-decoration: none;
+        }
+
+        section {
+            padding: 20px;
+            text-align: center;
+        }
+
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        table {
+            border-collapse: collapse;
+            margin: 0 auto;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        img {
+            width: 20px; /* Ajusta el tamaño del icono según sea necesario */
+            vertical-align: middle;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <h1>Mi Página de Quinielas</h1>
+    </header>
+
+    <nav>
+        <a href="index.html">Inicio</a>
+        <a href="insertarequipo.html">insertarequipo</a>
+        <a href="insertarpartidos.html">insertarpartidos</a>
+        <a href="quiengano.html">Quien gano?</a>
+        <a href="carrito.html" class="cart-button">
+            <img src="R.png" alt="Carrito de compras">
+       </a>
+    </nav>
+
+ <section>
+        <h2>Formulario de Pronóstico</h2>
+        <form action="/quinielas" method="get">
+            <table>
+                <tr>
+                    <td><label for="partido1">Chivas vs. Pumas</label></td>
+                    <td><input type="radio" id="partido1_local" name="partido1" value="local" required> Chivas
+                        <input type="radio" id="partido1_visitante" name="partido1" value="visitante" required> Pumas
+                        <input type="radio" id="partido1_empate" name="partido1" value="empate" required> Empate
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="partido2">León vs. Mazatlán</label></td>
+                    <td><input type="radio" id="partido2_local" name="partido2" value="local" required> León
+                        <input type="radio" id="partido2_visitante" name="partido2" value="visitante" required> Mazatlán
+                        <input type="radio" id="partido2_empate" name="partido2" value="empate" required> Empate
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="partido3">Pumas vs. Toluca</label></td>
+                    <td><input type="radio" id="partido3_local" name="partido3" value="local" required> Pumas
+                        <input type="radio" id="partido3_visitante" name="partido3" value="visitante" required> Toluca
+                        <input type="radio" id="partido3_empate" name="partido3" value="empate" required> Empate
+                    </td>
+                </tr>
+                <tr>
+                    <td><label for="partido4">Juárez vs. Chivas</label></td>
+                    <td><input type="radio" id="partido4_local" name="partido4" value="local" required> Juárez
+                        <input type="radio" id="partido4_visitante" name="partido4" value="visitante" required> Chivas
+                        <input type="radio" id="partido4_empate" name="partido4" value="empate" required> Empate
+                    </td>   
+                </tr>
+                <tr>
+                    <td><label for="partido5">Cruz Azul vs. Santos</label></td>
+                    <td><input type="radio" id="partido5_local" name="partido5" value="local" required> Cruz Azul
+                        <input type="radio" id="partido5_visitante" name="partido5" value="visitante" required> Santos
+                        <input type="radio" id="partido5_empate" name="partido5" value="empate" required> Empate
+                    </td>
+                </tr>
+            </table>
+            <button type="submit">Enviar Pronóstico</button>
+        </form>
+    </section>
+
+    <footer>
+       <p>&copy; <?php echo date("Y"); ?> Mi Página de Quinielas. Todos los derechos reservados.</p>
+    </footer>
+
+</body>
+
+</html>

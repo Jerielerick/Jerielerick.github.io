@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        form {
+            width: 300px; /* Puedes ajustar el ancho según tus preferencias */
+            border: 2px solid #3498db; /* Borde de color azul */
+            padding: 20px;
+            border-radius: 8px; /* Bordes redondeados */
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        input {
+            width: calc(100% - 16px);
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+
+        input[type="submit"] {
+            background-color: #3498db; /* Fondo azul para el botón de envío */
+            color: #fff; /* Texto blanco para el botón de envío */
+            cursor: pointer;
+            border: none; /* Eliminar el borde del botón */
+            border-radius: 4px; /* Bordes redondeados para el botón */
+        }
+    </style>
+</head>
+<body>
+    <div>
+        <h1>Formulario de Quinielas</h1>
+        <form action="/insertarpartidos" method="get">
+            <label for="equipo_visitante">Equipo Visitante:</label>
+            <input type="text" id="equipo_visitante" name="equipo_visitante" placeholder="Equipo.. ">
+
+            <label for="equipo_local">Equipo Local:</label>
+            <input type="text" id="equipo_local" name="equipo_local" placeholder="equipo.. ">
+
+            <label for="nombre_partido">Nombre del Partido:</label>
+            <input type="text" id="nombre_partido" name="nombre_partido" placeholder="nombre.. ">
+
+            <input type="submit" value="Guardar Quiniela">
+        </form>
+    </div>
+</body>
+</html>

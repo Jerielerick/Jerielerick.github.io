@@ -1,0 +1,534 @@
+const express = require('express');
+const session = require('express-session');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const bcrypt = require('bcrypt'); // Agregar la biblioteca bcrypt
+const saltRounds = 10; // Número de rounds para el algoritmo de hash
+const mysql = require('mysql');
+
+const app = express();
+
+const pool = mysql.createPool({
+    connectionLimit: 10,
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "appweb"
+});
+
+app.use(express.urlencoded({extended:false}))//es para no tener problemas cuando realicemos laspeticiones y caundo se cargen los datos de usuario y pasword
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+const con = mysql.createConnection({
+    host: "localhost",
+    user: "root",
+    password: "",
+    database: "appweb"
+});
+
+// Connect to MySQL
+con.connect((err) => {
+    if (err) {
+        console.error('Error connecting to MySQL:', err);
+    } else {
+        console.log('Connected to MySQL');
+    }
+});
+
+class Server {
+    constructor() {
+        this.app = express();
+        this.port = process.env.PORT;
+
+        this.middlewares();
+        this.routes();
+    }
+
+    middlewares() {
+        this.app.use(express.static('public'));
+        this.app.set('view engine', 'ejs');
+        this.app.use(cookieParser());
+        this.app.use(session({
+            secret: "amar",
+            saveUninitialized: true,
+            resave: true
+        }));
+    }
+
+    validarYLimpiarDato(dato, tipo) {
+        // Implementa la lógica de validación y limpieza según tus requisitos
+    
+            // Verificar si el dato es undefined o null
+            if (dato === undefined || dato === null) {
+                return ''; // Otra opción podría ser devolver un valor predeterminado o lanzar una excepción
+            }
+            
+            // Limpieza básica para prevenir ataques XSS
+            dato = dato.toString().trim();
+    
+            // Validación según el tipo de dato
+            switch (tipo) {
+                case 'int':
+                    // Validar que sea un número entero
+                    dato = parseInt(dato, 10) || 0;
+                    break;
+                case 'varchar':
+                    // Validar que sea una cadena de caracteres
+                    dato = dato.substring(0, 255); // Limitar la longitud a 255 caracteres
+                    break;
+                case 'password':
+                    // Validar que tenga al menos 8 caracteres y al menos un número
+                    if (dato.length < 8 || !/\d/.test(dato)) {
+                        // Puedes manejar el error de alguna manera, lanzar una excepción o devolver un valor predeterminado
+                        dato = ''; // En este caso, se asigna una cadena vacía
+                    }
+                    break;
+                case 'email':
+                    // Validar que sea un formato de correo electrónico
+                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(dato)) {
+                        dato = ''; // En este caso, se asigna una cadena vacía
+                    }
+                    break;
+                case 'phone':
+                    // Validar que sea un número de teléfono celular con lada
+                    dato = dato.replace(/[^\d]/g, ''); // Eliminar caracteres no numéricos
+                    if (!/^\d{10,15}$/.test(dato)) {
+                        dato = ''; // En este caso, se asigna una cadena vacía
+                    }
+                    break;
+                default:
+                    // Tipo desconocido, devolver valor predeterminado o manejar el error de alguna manera
+                    dato = '';
+                    break;
+            }
+        
+        return dato;
+    }
+
+    routes() {
+        this.app.get('/quinielasfrm', (req, res) => {
+            if (req.session.user) {
+                res.render("quinielas" , req.session.user.nam);
+            } else {
+                res.send("NO has inisado secion");
+            }
+        });
+        this.app.get('/quinielas3', (req, res) => {
+            if (req.session.user) {
+                res.render("quinielas" , req.session.user.nam);
+            } else {
+                res.send("NO has inisado secion");
+            }
+        });
+        this.app.get('/hola', (req, res) => {
+            if (req.session.user) {
+                res.send("iniciasre secion " + req.session.user.nam);
+            } else {
+                res.send("NO has inisado secion");
+            }
+        });
+        
+
+        this.app.get('/login', (req, res) => {
+            let email = req.query.email;
+            let password = req.query.password;
+
+            // conexión bd
+            let mysql = require('mysql');
+
+            let con = mysql.createConnection({
+                host: "localhost",
+                user: "root",
+                password: "",
+                database: "appweb"
+            });
+
+            con.connect((err) => {
+                if (err) {
+                    console.error("Error al conectar a la base de datos: ", err);
+                    res.status(500).send("Error interno del servidor");
+                    return;
+                }
+
+                console.log("¡Conectado a la base de datos!");
+
+                let sql = "SELECT * FROM ialumnos WHERE email = ? AND password = ?";
+                
+                // SQL y usar parámetros para evitar SQL injection
+
+                con.query(sql, [email, password], (err, result) => {
+                    if (err) {
+                        console.error("Error en la consulta: ", err);
+                        res.status(500).send("Error interno del servidor");
+                        return;
+                    }
+
+                    // Manejo de los resultados de la consulta
+                    if (result.length > 0 && password === result[0].password) {
+                        console.log("Inicio de sesión exitoso");
+                        // Crear objeto de usuario para la sesión
+                         let user ={
+                            nam:email,
+                            rol: result[0].rol
+                        };
+                        req.session.user = user;//sesion
+                        req.session.save();//sesion
+                        res.render("quinielas", {user: user});
+
+                    } else {
+                        // Usuario no encontrado o credenciales incorrectas
+                        res.status(401).send("Credenciales incorrectas");
+                    }
+
+                    // Cierra la conexión después de realizar la consulta
+                    con.end();
+                });
+            });
+
+        });
+        
+        
+        
+
+        this.app.get("/registrarFrm",(req, res) =>{
+            if (req,session.user)
+            {
+                if (req.session.user && req.session.user.rol == 'admin') {
+                    res.render('registrar', { user: req.session.user });
+                }
+            }
+        });
+
+        this.app.get('/registrardo', (req, res) => {
+            let idStudent = req.query.idStudent;
+            let firstname = req.query.firstname;
+            let lname = req.query.lname;
+            let lastname = req.query.lastname;
+            let age = req.query.age;
+            let country = req.query.country;
+            let plainPassword = req.query.password; // Contraseña sin encriptar
+            let email = req.query.email;
+            let phone = req.query.phone;
+
+            // Generar un salt y luego utilizarlo para hashear la contraseña
+            bcrypt.genSalt(saltRounds, (err, salt) => {
+                if (err) {
+                    console.error("Error al generar el salt: ", err);
+                    throw err; // o manejarlo de manera apropiada
+                }
+            
+                bcrypt.hash(plainPassword, salt, (err, hashedPassword) => {
+                    if (err) {
+                        console.error("Error al hashear la contraseña: ", err);
+                        throw err; // o manejarlo de manera apropiada
+                    }
+
+                    let mysql = require('mysql');
+
+                    let con = mysql.createConnection({
+                        host: "localhost",
+                        user: "root",
+                        password: "",
+                        database: "appweb"
+                    });
+
+                    con.connect((err) => {
+                        if (err) throw err;
+                        console.log("Connected!");
+
+                        let sql = "INSERT INTO ialumnos (`firstname`, `lastname`, `edad`, `country`, `password`, `email`, `phone`) VALUES ('" + firstname + "','" + lastname + "', " + age + " , '" + country + "','" + hashedPassword + "','" + email + "','" + phone + "')";
+
+                        con.query(sql, (err, result) => {
+                            if (err) throw err;
+
+                            console.log("1 record inserted");
+
+                            // Obtener el idStudent del resultado de la inserción
+                            let insertedId = result.insertId;
+
+                            res.render('registrado', {
+                                idStudent: insertedId,
+                                Nombre: firstname,
+                                country: country
+                            });
+                        });
+                    });
+                });
+            });
+        });
+
+        //quinelas + consulta
+        
+        this.app.get('/quinielas', (req, res) => {
+            if (req.session.user)
+            {
+                if (req.session.user.rol == 'admin')
+                {
+                    let mysql = require('mysql');
+
+                    let con = mysql.createConnection({
+                        host: "localhost",
+                        user: "root",
+                        password: "",
+                        database: "appweb"
+                    });
+
+                    con.connect((err) => {
+                        if (err) throw err;
+                        console.log("¡Conectado a la base de datos!");
+                        let sql = "SELECT * FROM partido ";
+
+                        con.query(sql, (err, result) => {
+                            if (err) throw err;
+                            console.log(result);
+                            res.render("quinielas", { partido: result });
+                        });
+                    });
+                }
+                else
+                {
+                    res.send("No eres admin");
+                }
+            } 
+            else{
+                res.send("No has iniciado session");
+            }  
+        });
+
+        this.app.get('/quinelas2', (req, res) => {
+            let idStudent = req.query.idStudent;
+            let firstname = req.query.firstname;
+            let lname = req.query.lname;
+            let lastname = req.query.lastname;
+            let age = req.query.age;
+            let country = req.query.country;
+            let plainPassword = req.query.password; // Contraseña sin encriptar
+            let email = req.query.email;
+            let phone = req.query.phone;
+
+            // Generar un salt y luego utilizarlo para hashear la contraseña
+            bcrypt.genSalt(saltRounds, (err, salt) => {
+                if (err) {
+                    console.error("Error al generar el salt: ", err);
+                    throw err; // o manejarlo de manera apropiada
+                }
+            
+                bcrypt.hash(plainPassword, salt, (err, hashedPassword) => {
+                    if (err) {
+                        console.error("Error al hashear la contraseña: ", err);
+                        throw err; // o manejarlo de manera apropiada
+                    }
+
+                    let mysql = require('mysql');
+
+                    let con = mysql.createConnection({
+                        host: "localhost",
+                        user: "root",
+                        password: "",
+                        database: "appweb"
+                    });
+
+                    con.connect((err) => {
+                        if (err) throw err;
+                        console.log("Connected!");
+
+                        let sql = "INSERT INTO ialumnos (`firstname`, `lastname`, `edad`, `country`, `password`, `email`, `phone`) VALUES ('" + firstname + "','" + lastname + "', " + age + " , '" + country + "','" + hashedPassword + "','" + email + "','" + phone + "')";
+
+                        con.query(sql, (err, result) => {
+                            if (err) throw err;
+
+                            console.log("1 record inserted");
+
+                            // Obtener el idStudent del resultado de la inserción
+                            let insertedId = result.insertId;
+
+                            res.render('registrado', {
+                                idStudent: insertedId,
+                                Nombre: firstname,
+                                country: country
+                            });
+                        });
+                    });
+                });
+            });
+        });
+
+
+
+        this.app.get('/actualizado', (req, res) => {
+            let idStudent = req.query.idStudent;
+            let firstname = req.query.firstname;
+            let lastname = req.query.lastname;
+            let country = req.query.country;
+            let password = req.query.password;
+            let email = req.query.email;
+            let phone = req.query.phone;
+
+            let mysql = require('mysql');
+
+            let con = mysql.createConnection({
+                host: "localhost",
+                user: "root",
+                password: "",
+                database: "appweb"
+            });
+
+            con.connect((err) => {
+                if (err) throw err;
+                console.log("Connected!");
+
+                let sql = "UPDATE ialumnos SET password  = '" + password + "' WHERE idStudent =" + idStudent + " AND firstname = '" + firstname + "' ";
+                //UPDATE `ialumnos` SET `password` =     'lenel nuevo' WHERE `ialumnos`.`idStudent` = 21;
+                con.query(sql, (err, result) => {
+                    if (err) throw err;
+
+                    console.log("1 record inserted");
+
+                    // Obtener el idStudent del resultado de la inserción
+                    let insertedId = result.insertId;
+
+                    res.render('actualizado', {
+                        idStudent: idStudent,
+                        Nombre: firstname,
+                        country: country
+                    });
+                });
+            });
+        });
+
+        this.app.post('/guardarQuiniela', (req, res) => {
+            let equipoVisitante = req.body.equipo_visitante;
+            let equipoLocal = req.body.equipo_local;
+            let nombrePartido = req.body.nombre_partido;
+        
+            let sql = `INSERT INTO quinielas (equipo_visitante, equipo_local, nombre_partido) VALUES (?, ?, ?)`;
+        
+            db.query(sql, [equipoVisitante, equipoLocal, nombrePartido], (err, result) => {
+                if (err) {
+                    console.error('Error al insertar en la base de datos: ' + err.message);
+                    res.status(500).send('Error interno del servidor');
+                    return;
+                }
+        
+                console.log('Quiniela insertada correctamente en la base de datos.');
+                res.send('Quiniela guardada exitosamente.');
+            });
+        });
+        this.app.post('/insertarequipo', (req, res) => {
+            let nombre = req.body.nombre_equipo; // Cambiado de req.query a req.body
+            console.log(nombre);
+        
+            let mysql = require('mysql');
+        
+            let con = mysql.createConnection({
+                host: "localhost",
+                user: "root",
+                password: "",
+                database: "appweb"
+            });
+        
+            // Utilizar consultas parametrizadas para prevenir la inyección de SQL
+            let sql = "INSERT INTO equipo (nombre) VALUES (?)";
+            let values = [nombre];
+        
+            con.query(sql, values, (err, result) => {
+                if (err) {
+                    console.error("Error al insertar el registro:", err);
+                    res.status(500).send("Error interno del servidor");
+                    return;
+                }
+        
+                console.log("1 record inserted");
+        
+                // Obtener el idStudent del resultado de la inserción
+                let insertedId = result.insertId;
+        
+                res.render('insertarequipo', {
+                    nombre_equipo: nombre
+                });
+        
+                // Cerrar la conexión
+                con.end();
+            });
+        });
+        
+        
+        this.app.post('/insertarpartidos', (req, res) => {
+            let equipo_visitante = req.query.equipo_visitante;
+            let equipo_local = req.query.equipo_local;
+            let nombre_partido = req.query.nombre_partido;
+            let mysql = require('mysql');
+            let con = mysql.createConnection({
+                host: "localhost",
+                user: "root",
+                password: "",
+                database: "appweb"
+            });
+        
+            con.connect((err) => {
+                if (err) throw err;
+                console.log("Connected!");
+
+                let sql = "INSERT INTO partido (nombre_partido, equipo_local, equipo_visitante) VALUES (' "+nombre_partido+" ',' "+equipo_local+" ',' "+equipo_visitante+" ');";
+
+                con.query(sql, (err, result) => {
+                    if (err) throw err;
+
+                    console.log("1 record inserted");
+
+                    // Obtener el idStudent del resultado de la inserción
+                    let insertedId = result.insertId;
+
+                    res.send("Record inserted successfully");
+                });
+            });
+        });
+
+
+        this.app.get('/consultar', (req, res) => {
+            if (req.session.user)
+            {
+                if (req.session.user.rol == 'admin')
+                {
+                    let mysql = require('mysql');
+
+                    let con = mysql.createConnection({
+                        host: "localhost",
+                        user: "root",
+                        password: "",
+                        database: "appweb"
+                    });
+
+                    con.connect((err) => {
+                        if (err) throw err;
+                        console.log("¡Conectado a la base de datos!");
+                        let sql = "SELECT * FROM ialumnos ";
+
+                        con.query(sql, (err, result) => {
+                            if (err) throw err;
+                            console.log(result);
+                            res.render("consultar", { ialumnos: result });
+                        });
+                    });
+                }
+                else
+                {
+                    res.send("No eres admin");
+                }
+            } 
+            else{
+                res.send("No has iniciado session");
+            }  
+        });
+    }
+    
+
+    listen() {
+        this.app.listen(this.port, () => {
+            console.log("http://127.0.0.1:" + this.port);
+        });
+    }
+}
+
+module.exports = Server;

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <h1>Formulario de Quinielas</h1>
+    <form action="/insertarpartidos" method="post">
+        <label for="equipo_visitante">Equipo Visitante:</label>
+        <input type="text" id="equipo_visitante" name="equipo_visitante" placeholder="Equipo.. "><br>
+
+        <label for="equipo_local">Equipo Local:</label>
+        <input type="text" id="equipo_local" name="equipo_local" placeholder="equipo.. "><br>
+
+        <label for="nombre_partido">Nombre del Partido:</label>
+        <input type="text" id="nombre_partido" name="nombre_partido" placeholder="nombre.. "><br>
+
+        <input type="submit" value="Guardar Quiniela">
+    </form>
+</body>
+</html>
