@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<style>
+input[type=text], select {
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #c6ecd9;
+  border-radius: 4px;
+  box-sizing: border-box;
+}
+
+input[type=submit] {
+  width: 100%;
+  background-color: #008000;
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+input[type=submit]:hover {
+  background-color:greenyellow;
+}
+
+div {
+  border-radius: 5px;
+  background-color: grey;
+  padding: 20px;
+}
+
+img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
+}
+/* Estilos CSS para centrar el párrafo */
+p {
+      text-align: center; /* Centra el texto horizontalmente */
+      font-size: 25px; /* Ajusta el tamaño de la letra según sea necesario */
+}
+  /* Estilos para la línea negra en la dirección de la contraseña */
+  div.password-section {
+    border: 1px solid white;
+    padding: 10px; /* Ajusta según sea necesario */
+    margin-bottom: 10px; /* Ajusta según sea necesario */
+    text-align: center; /* Centra el texto horizontalmente */
+  }
+</style>
+<body>
+
+<title>Cambiar contaseña</title>
+<div style="background-color: #c6ecd9;">
+
+  <img src="/qui.png" alt="AUDIO" height="300" width="200">
+
+  <h3 style="color: black;">Cambiar contaseña</h3>
+
+<div>
+      <form action="/actualizado" > 
+
+      <label for="lname">ID Studen</label>
+      <input type="text" id="std" name="idStudent" placeholder="Your studen id.."  pattern="\d*" title="Ingresa solo números">
+
+      <hr>
+      <p> ó </p>
+
+  
+      <label for="firstname">Nombre</label>
+      <input type="text" id="fname" name="firstname" placeholder="Tu nombre..">
+  
+      <label for="lname">Apellido</label>
+      <input type="text" id="lname" name="lastname" placeholder="Tu apellido..">
+  
+      <label for="country">País</label>
+      <select id="country" name="country">
+        <option value="australia">Australia</option>
+        <option value="canada">Canadá</option>
+        <option value="usa">USA</option>
+        <option value="ciudadjuarez">Ciudad Juárez</option> 
+        <option value="mexico">México</option>              
+        <option value="colombia">Colombia</option>         
+        <option value="otro">Otro</option>                  
+      </select>
+      <br>
+      <label for="email">Email</label>
+      <input type="text" id="email" name="email">
+  
+      
+      <label for="phone">Telefono</label>
+      <input type="text" id="phone" name="phone">
+      <br>
+      <br>
+      <div class="password-section">
+        <label for="pwd">Nueva password</label>
+        <br>
+        <input type="password" id="pwd" name="password">
+      </div>
+      <br>
+
+
+      <br>
+      <input type="submit" value="Enviar">
+     
+    </form>
+  </div>
+  
+  </body>
+  </html>
